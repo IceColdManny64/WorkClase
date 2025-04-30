@@ -33,7 +33,7 @@ interface ApiService {
     @POST("service.php")//create account
     suspend fun addAccount(@Body account: AccountModel): Response<JsonObject>
 
-    @PUT("service.php")
+    @PUT("service.php")//update account
     fun updateAccount(@Body requestBody: RequestBody): Call<JsonObject>
 
     @DELETE("service.php")//delete account
