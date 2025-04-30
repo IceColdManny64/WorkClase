@@ -15,22 +15,25 @@ import retrofit2.http.Query
 
 interface ApiService {
 
-    @POST("user.php") //POST login
+    @POST("login.php") //POST login
     suspend fun login(@Body user: UserModel): Response<JsonObject>
+
+    @POST("register.php") //POST login create account
+    suspend fun loginCreate(@Body user: UserModel): Response<JsonObject>
 
     @GET("service.php") //get all accounts
     suspend fun getAccounts(): Response<List<AccountModel>>
 
-    @GET("service.php")//
+    @GET("service.php")//get one account
     suspend fun getAccount(@Query("id") id: Int): Response<AccountModel>
 
-    @POST("service.php")
+    @POST("service.php")//create account
     suspend fun addAccount(@Body account: AccountModel): Response<JsonObject>
 
-    @PUT("service.php")
+    @PUT("service.php")//update account
     suspend fun updateAccount(@Query("id") id: Int, @Body account: AccountModel): Response<JsonObject>
 
-    @DELETE("service.php")
+    @DELETE("service.php")//delete account
     suspend fun deleteAccount(@Query("id") id: Int): Response<JsonObject>
 }
 

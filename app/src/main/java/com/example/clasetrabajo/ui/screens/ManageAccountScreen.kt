@@ -78,6 +78,12 @@ fun ManageAccountScreen(
             onValueChange = { account.value = account.value.copy(description = it) },
             label = { Text("Account Description") }
         )
+        OutlinedTextField(
+            modifier = Modifier.fillMaxWidth(),
+            value = account.value.imageURL,
+            onValueChange = { account.value = account.value.copy(imageURL = it) },
+            label = { Text("Account Image") }
+        )
 
         FilledTonalButton(
             modifier = Modifier
