@@ -3,6 +3,7 @@ package com.example.clasetrabajo.data.viewmodel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.clasetrabajo.data.model.AccountModel
 import com.example.clasetrabajo.data.model.UserModel
 import com.example.clasetrabajo.data.network.RetrofitClient
 import com.google.gson.JsonObject
@@ -24,6 +25,24 @@ class UserViewModel: ViewModel() {
                     onResult(jsonResponse)
                 }else{
                     Log.d("debug", "ERROR: ${response.body()}")
+                    onResult(null)
+                }
+            }catch (exception: Exception){
+                Log.d("debug", "API CALL FAILED: $exception")
+                onResult(null)
+            }
+        }
+    }
+    fun createUser(user_model: UserModel, onResult: (Response:JsonObject?) -> Unit){
+        viewModelScope.launch{
+            try {
+                val response = api.loginCreate(user_model)
+                if(response.isSuccessful){
+                    val jsonResponse = response.body()
+                    Log.d("debug", "$jsonResponse" /* or jsonResponse.toString()*/)
+                    onResult(jsonResponse)
+                }else{
+                    Log.d("debug", "ERROR: ${response.errorBody()?.string()}")
                     onResult(null)
                 }
             }catch (exception: Exception){

@@ -1,8 +1,8 @@
 package com.example.clasetrabajo.data.model
 
 data class UserModel(
-    var id:Int,
-    var name:String = "",
+    var id:Int = 0,
     var username:String = "",
     var password:String = "",
 )
+
