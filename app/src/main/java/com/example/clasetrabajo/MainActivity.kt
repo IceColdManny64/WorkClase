@@ -67,16 +67,11 @@ fun SetupNavGraph(navController: NavHostController){
         composable("loginScreen") { LoginScreen(navController) }
         composable("accountsScreen"){ AccountsScreen(navController) }
         composable("manageAcScreen") { ManageAccountScreen(navController = navController) }
-        composable(
-                route = "manageAcScreen/{id}",
-        arguments = listOf(navArgument("id") { defaultValue = -1 })
-        ) { backStackEntry ->
-        val id = backStackEntry.arguments?.getString("id")?.toIntOrNull() ?: -1
-        ManageAccountScreen(
-            navController = navController,
-            accountId = id // <-- aquí es importante nombrarlo
-        )
-    }
+        composable("manageAcScreen/{id}") { backStackEntry ->
+            val accountId = backStackEntry.arguments?.getString("id")?.toIntOrNull()
+            ManageAccountScreen(navController = navController, accountId = accountId)
+        }
+
         composable("favAcScreen"){ FavoriteAccountsScreen(navController) }
         }
     }

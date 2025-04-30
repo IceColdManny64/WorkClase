@@ -7,10 +7,13 @@ import retrofit2.http.FormUrlEncoded
 import retrofit2.http.Field
 import retrofit2.Response
 import com.google.gson.JsonObject
+import okhttp3.RequestBody
+import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.PUT
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface ApiService {
@@ -30,8 +33,8 @@ interface ApiService {
     @POST("service.php")//create account
     suspend fun addAccount(@Body account: AccountModel): Response<JsonObject>
 
-    @PUT("service.php")//update account
-    suspend fun updateAccount(@Query("id") id: Int, @Body account: AccountModel): Response<JsonObject>
+    @PUT("service.php")
+    fun updateAccount(@Body requestBody: RequestBody): Call<JsonObject>
 
     @DELETE("service.php")//delete account
     suspend fun deleteAccount(@Query("id") id: Int): Response<JsonObject>

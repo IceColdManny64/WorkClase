@@ -170,6 +170,7 @@ fun TryLogin(
             val loginStatus = jsonResponse?.get("login")?.asString
             Log.d("debug", "LOGIN STATUS: $loginStatus")
             if(loginStatus == "success"){
+                Toast.makeText(context, "Login successful", Toast.LENGTH_SHORT).show()
                 navController.navigate("accountsScreen")
             } else {
                 Toast.makeText(

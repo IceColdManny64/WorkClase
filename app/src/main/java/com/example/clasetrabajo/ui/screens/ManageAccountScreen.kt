@@ -90,20 +90,22 @@ fun ManageAccountScreen(
                 .padding(0.dp, 10.dp)
                 .fillMaxWidth(),
             onClick = {
-                TryCreateAccount(account, context, viewModel, accountId)
+                TryCreateAccount(account, context, viewModel, accountId, navController)
             }
         ){
             Text("Save/Update Account")
         }
         if(accountId != null){
-        FilledTonalButton(
-            modifier = Modifier
-                .padding(0.dp, 10.dp)
-                .fillMaxWidth(),
-            onClick = {TryDeleteAccount(context, viewModel, accountId)}
-        ){
-            Text("Delete Account")
-        }
+            FilledTonalButton(
+                modifier = Modifier
+                    .padding(0.dp, 10.dp)
+                    .fillMaxWidth(),
+                onClick = {
+                    TryDeleteAccount(context, viewModel, accountId, navController)
+                }
+            ){
+                Text("Delete Account")
+            }
         }
     }
 }
@@ -112,8 +114,9 @@ fun TryCreateAccount(
     accountState: MutableState<AccountModel>,
     context: Context,
     viewModel: AccountViewModel,
-    accountId: Int?
-){
+    accountId: Int?,
+    navController: NavController
+) {
     val acc = accountState.value
 
     if (
@@ -127,37 +130,45 @@ fun TryCreateAccount(
     }
 
     if (accountId == null) {
+        // CREAR
         viewModel.createAccount(acc) { jsonResponse ->
             val createAcStatus = jsonResponse?.get("store")?.asString
             if (createAcStatus == "success") {
+                navController.navigate("accountsScreen")
                 Toast.makeText(context, "Account created successfully", Toast.LENGTH_SHORT).show()
             } else {
-                Toast.makeText(context, "Error creating account", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "Account creation failed", Toast.LENGTH_SHORT).show()
             }
         }
     } else {
+        // ACTUALIZAR
         viewModel.updateAccount(accountId, acc) { jsonResponse ->
-            val updateAcStatus = jsonResponse?.get("update")?.asString
-            if (updateAcStatus == "success") {
+            val updateStatus = jsonResponse?.get("update")?.asString
+            if (updateStatus == "success") {
+                navController.navigate("accountsScreen")
                 Toast.makeText(context, "Account updated successfully", Toast.LENGTH_SHORT).show()
             } else {
-                Toast.makeText(context, "Error updating account", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "Account update failed", Toast.LENGTH_SHORT).show()
             }
         }
     }
 }
 
+
 fun TryDeleteAccount(
     context: Context,
     viewModel: AccountViewModel,
-    accountId: Int
-){
+    accountId: Int,
+    navController: NavController
+) {
     viewModel.deleteAccount(accountId) { jsonResponse ->
-        val deleteAcStatus = jsonResponse?.get("delete")?.asString
-        if (deleteAcStatus == "success") {
+        val deleteStatus = jsonResponse?.get("delete")?.asString
+        if (deleteStatus == "success") {
             Toast.makeText(context, "Account deleted successfully", Toast.LENGTH_SHORT).show()
+            navController.navigate("accountsScreen") // o usa navigate si prefieres volver a otra screen
         } else {
-            Toast.makeText(context, "Error deleting account", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "Failed to delete account", Toast.LENGTH_SHORT).show()
         }
     }
 }
+
