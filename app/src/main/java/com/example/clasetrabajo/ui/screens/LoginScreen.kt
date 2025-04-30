@@ -22,6 +22,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -36,6 +37,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
+import com.example.clasetrabajo.data.model.AccountModel
 import com.example.clasetrabajo.data.model.UserModel
 import com.example.clasetrabajo.data.viewmodel.UserViewModel
 
@@ -133,7 +135,10 @@ fun LoginForm(navController: NavController, ViewModel: UserViewModel = viewModel
                     .fillMaxWidth()
                     .padding(0.dp, 10.dp),
                 shape = CutCornerShape(4.dp),
-                onClick = {},
+                onClick = {
+                    val account = UserModel(username = user, password = password)
+                    TryCreate(account, context, ViewModel)
+                },
                 colors = ButtonDefaults.buttonColors(
                     contentColor = Color.Black,
                     containerColor = MaterialTheme.colorScheme.primary
@@ -160,11 +165,12 @@ fun TryLogin(
             Toast.LENGTH_SHORT //the message will show for a shorter timespan
         ).show()
     } else {
-        val user_model = UserModel(0, "", user, password)
+        val user_model = UserModel(username = user, password = password)
         viewModel.loginAPI(user_model){ jsonResponse ->
             val loginStatus = jsonResponse?.get("login")?.asString
             Log.d("debug", "LOGIN STATUS: $loginStatus")
             if(loginStatus == "success"){
+                Toast.makeText(context, "Login successful", Toast.LENGTH_SHORT).show()
                 navController.navigate("accountsScreen")
             } else {
                 Toast.makeText(
@@ -176,5 +182,30 @@ fun TryLogin(
         }
     }
 }
+
+fun TryCreate(
+    acc: UserModel,
+    context: Context,
+    viewModel: UserViewModel
+){
+    if (
+        acc.username.isEmpty() ||
+        acc.password.isEmpty()
+    ) {
+        Toast.makeText(context, "None of the fields can be empty", Toast.LENGTH_SHORT).show()
+        return
+    } else {
+        val acc = UserModel(username = acc.username, password = acc.password)
+        viewModel.createUser(acc) { jsonResponse ->
+            val createUsStatus = jsonResponse?.get("store")?.asString
+            if (createUsStatus == "success") {
+                Toast.makeText(context, "Account created successfully", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(context, "Error creating account", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+}
+
 
 

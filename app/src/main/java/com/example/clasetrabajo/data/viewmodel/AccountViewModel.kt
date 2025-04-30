@@ -7,6 +7,8 @@ import com.example.clasetrabajo.data.model.AccountModel
 import com.example.clasetrabajo.data.network.RetrofitClient
 import com.google.gson.JsonObject
 import kotlinx.coroutines.launch
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.RequestBody.Companion.toRequestBody
 import retrofit2.Response
 
 class AccountViewModel: ViewModel() {
@@ -55,24 +57,38 @@ class AccountViewModel: ViewModel() {
             }
         }
     }
-    fun updateAccount(id: Int, account: AccountModel, onResult:(JsonObject?) -> Unit) {
-        viewModelScope.launch {
-            try {
-                val response = api.updateAccount(id, account)
-                if (response.isSuccessful){
+    fun updateAccount(id: Int, account: AccountModel, onResult: (JsonObject?) -> Unit) {
+        val json = JsonObject().apply {
+            addProperty("id", id)
+            addProperty("name", account.name)
+            addProperty("username", account.username)
+            addProperty("password", account.password)
+            addProperty("description", account.description)
+            addProperty("imageURL", account.imageURL)
+        }
+
+        val requestBody = json.toString().toRequestBody("application/json; charset=utf-8".toMediaType())
+
+        api.updateAccount(requestBody).enqueue(object : retrofit2.Callback<JsonObject> {
+            override fun onResponse(call: retrofit2.Call<JsonObject>, response: Response<JsonObject>) {
+                if (response.isSuccessful) {
                     val jsonResponse = response.body()
-                    Log.d("debug","MSG: ${response.body()}")
+                    Log.d("debug", "MSG: $jsonResponse")
                     onResult(jsonResponse)
-                } else{
-                    Log.d("debug","ERROR: ${response.body()}")
+                } else {
+                    Log.d("debug", "ERROR: ${response.errorBody()?.string()}")
                     onResult(null)
                 }
-            }catch (exception: Exception){
-                Log.d("debug","API CALL FAILED: $exception")
+            }
+
+            override fun onFailure(call: retrofit2.Call<JsonObject>, t: Throwable) {
+                Log.d("debug", "API CALL FAILED: $t")
                 onResult(null)
             }
-        }
+        })
     }
+
+
 
     fun deleteAccount(id: Int, onResult:(JsonObject?) -> Unit) {
         viewModelScope.launch {
