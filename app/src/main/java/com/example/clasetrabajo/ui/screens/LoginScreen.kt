@@ -133,13 +133,26 @@ fun LoginForm(navController: NavController, ViewModel: UserViewModel = viewModel
                     .fillMaxWidth()
                     .padding(0.dp, 10.dp),
                 shape = CutCornerShape(4.dp),
-                onClick = {},
+                onClick = {TryCreate(user, password, context, ViewModel)},
                 colors = ButtonDefaults.buttonColors(
                     contentColor = Color.Black,
                     containerColor = MaterialTheme.colorScheme.primary
                 )
             ) {
                 Text("Create Account")
+            }
+            OutlinedButton(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(0.dp, 10.dp),
+                shape = CutCornerShape(4.dp),
+                onClick = {TryCreate(user, password, context, ViewModel)},
+                colors = ButtonDefaults.buttonColors(
+                    contentColor = Color.Black,
+                    containerColor = MaterialTheme.colorScheme.primary
+                )
+            ) {
+                Text("Update Account")
             }
         }
     }
@@ -160,7 +173,7 @@ fun TryLogin(
             Toast.LENGTH_SHORT //the message will show for a shorter timespan
         ).show()
     } else {
-        val user_model = UserModel(0, "", user, password)
+        val user_model = UserModel(0, user, password)
         viewModel.loginAPI(user_model){ jsonResponse ->
             val loginStatus = jsonResponse?.get("login")?.asString
             Log.d("debug", "LOGIN STATUS: $loginStatus")
@@ -170,6 +183,42 @@ fun TryLogin(
                 Toast.makeText(
                     context,
                     "Failed login, check your credentials",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
+    }
+}
+
+fun TryCreate(
+    user:String,
+    password:String,
+    context: Context,
+    viewModel: UserViewModel
+){
+    if(user == "" || password == ""){
+        //requires a context
+        Toast.makeText(
+            //will show a message only when both user and password are empty
+            context,
+            "User or password cannot be empty",
+            Toast.LENGTH_SHORT //the message will show for a shorter timespan
+        ).show()
+    } else {
+        val user_model = UserModel(0, user, password)
+        viewModel.loginAPI(user_model){ jsonResponse ->
+            val createStatus = jsonResponse?.get("store")?.asString
+            Log.d("debug", "CREATE STATUS: $createStatus")
+            if(createStatus == "success"){
+                Toast.makeText(
+                    context,
+                    "Account created successfully\n" + "you can login now",
+                    Toast.LENGTH_SHORT
+                ).show()
+            } else {
+                Toast.makeText(
+                    context,
+                    "Failed create",
                     Toast.LENGTH_SHORT
                 ).show()
             }

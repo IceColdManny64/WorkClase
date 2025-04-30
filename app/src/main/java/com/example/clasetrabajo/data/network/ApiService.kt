@@ -1,37 +1,36 @@
-    package com.example.clasetrabajo.data.network
+package com.example.clasetrabajo.data.network
 
-    import com.example.clasetrabajo.data.model.AccountModel
-    import com.example.clasetrabajo.data.model.UserModel
-    import retrofit2.http.POST
-    import com.google.gson.JsonObject
-    import retrofit2.Response
-    import retrofit2.http.Body
-    import retrofit2.http.DELETE
-    import retrofit2.http.GET
-    import retrofit2.http.PUT
-    import retrofit2.http.Path
+import com.example.clasetrabajo.data.model.AccountModel
+import com.example.clasetrabajo.data.model.UserModel
+import retrofit2.http.POST
+import retrofit2.http.FormUrlEncoded
+import retrofit2.http.Field
+import retrofit2.Response
+import com.google.gson.JsonObject
+import retrofit2.http.Body
+import retrofit2.http.DELETE
+import retrofit2.http.GET
+import retrofit2.http.PUT
+import retrofit2.http.Query
 
-    //endpoints
-    interface ApiService {
+interface ApiService {
 
-        //json object
-        @POST("user")
-        suspend fun login(@Body username: UserModel):Response<JsonObject>
+    @POST("user.php") //POST login
+    suspend fun login(@Body user: UserModel): Response<JsonObject>
 
-        //account list
-        @GET("service")
-        suspend fun getAccounts():Response<List<AccountModel>>
+    @GET("service.php") //get all accounts
+    suspend fun getAccounts(): Response<List<AccountModel>>
 
-        //only one element (id)
-        @GET("service/{id}")
-        suspend fun getAccount(@Path("id") id: Int): Response<AccountModel>
+    @GET("service.php")//
+    suspend fun getAccount(@Query("id") id: Int): Response<AccountModel>
 
-        @POST("service")
-        suspend fun addAccount(@Body service: AccountModel): Response<JsonObject>
+    @POST("service.php")
+    suspend fun addAccount(@Body account: AccountModel): Response<JsonObject>
 
-        @PUT("service/{id}")
-        suspend fun updateAccount(@Path("id") id:Int, @Body service:AccountModel): Response<JsonObject>
+    @PUT("service.php")
+    suspend fun updateAccount(@Query("id") id: Int, @Body account: AccountModel): Response<JsonObject>
 
-        @DELETE("service/{id}")
-        suspend fun deleteAccount(@Path("id") id:Int): Response<JsonObject>
-    }
+    @DELETE("service.php")
+    suspend fun deleteAccount(@Query("id") id: Int): Response<JsonObject>
+}
+
